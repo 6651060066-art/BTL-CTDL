@@ -1,20 +1,16 @@
 // ============================================================
-//  QUẢN LÝ GIA PHẢ GIA TỘC MINI - PHIÊN BẢN CƠ BẢN
+//  QUẢN LÝ GIA PHẢ GIA TỘC MINI 
 //  Cây đa phân biểu diễn bằng cây nhị phân LCRS
 //     firstChild  = con đầu tiên
 //     nextSibling = anh/chị/em kế tiếp
 //
 //  Chỉ dùng kiến thức C++ phổ thông: biến, if/for/while, hàm,
-//  mảng, struct, con trỏ, đệ quy, string, đọc/ghi tệp.
+//  mảng, struct, con trỏ, đệ quy, string.
 //  (không dùng vector, auto, nullptr, lambda, STL queue...)
-//
-//  Biên dịch: g++ giapha_coban.cpp -o giapha   (hoặc bấm F11 trong Dev-C++)
-//  Lưu file ở dạng UTF-8 để hiển thị tiếng Việt.
-//
+//  "dữ liệu mẫu" hoặc "tự nhập gia phả mới".
 //  File chia thành 5 PHẦN cho 5 người (xem các dòng "PHẦN n").
 // ============================================================
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <cstdlib>    // atoi, exit
 #include <cctype>     // isalnum, tolower
@@ -24,8 +20,6 @@
 using namespace std;
 
 const int MAX_NODE = 1000;              // số thành viên tối đa
-const string TEN_FILE = "giapha.txt";
-const string TIEU_DE_FILE = "GIAPHA_LCRS_V1";
 const int NAM_NHO_NHAT = 1000;
 const int NAM_LON_NHAT = 2100;
 
@@ -69,6 +63,8 @@ void tachNode(Node* cha, Node* x);
 Node* hoiThanhVien(string loiNhac);
 void inThongTin(Node* n);
 void taoDuLieuMau();
+void menuKhoiTao();
+void hienHuongDanNhap();
 void hienMenu();
 // --- PHẦN 2
 Node* nhapThanhVienMoi(Node* cha);
@@ -93,9 +89,6 @@ Node* timLCA(Node* goc, Node* a, Node* b);
 bool timDuongDi(Node* n, Node* dich, Node* duong[], int& soLuong);
 void menuLCA();
 void menuTheHe();
-void giaiThichLCRS();
-void inBangLCRS(Node* n);
-void inCayNhiPhan(Node* n, string tienTo, string nhan);
 // --- PHẦN 5
 int chieuCao(Node* n);
 void demGioiTinh(Node* n, int& nam, int& nu);
@@ -103,12 +96,10 @@ void timNamSinhNhoNhat(Node* n, int& namNho);
 void inNguoiSinhNam(Node* n, int nam, bool& laDauTien);
 void thongKe();
 void inCayPhanCap(Node* n, string tienTo, bool laCuoi, bool laGoc);
+int doRongHienThi(string s);
+string soSangChuoi(int v);
+void hienThiBangThanhVien();
 void xuatGiaPha();
-void ghiDeQuy(ofstream& f, Node* n, string maCha);
-void luuDuLieu();
-int tachTruong(string dong, string truong[], int toiDa);
-int docDuLieu();
-void menuDoc();
 
 
 // ************************************************************
@@ -303,26 +294,67 @@ void inThongTin(Node* n) {
          << " | Thế hệ: " << tinhTheHe(root, n, 1) << "\n";
 }
 
-// Dữ liệu mẫu: 9 người, 4 thế hệ
+// Dữ liệu mẫu (khai báo trực tiếp trong code): 10 người, 4 thế hệ
+//   G001 (gốc) -> G002, G003, G004
+//   G002 -> G005, G006     G003 -> G007, G008     G005 -> G009, G010
+// Mỗi người được tạo đúng một lần và gắn vào đúng một cha/mẹ.
 void taoDuLieuMau() {
     xoaCay(root);
-    root = taoNode("G001", "Nguyễn Văn Ông", 1940, 'M');
-    Node* binh  = taoNode("G002", "Nguyễn Văn Bình", 1965, 'M');
-    Node* cuc   = taoNode("G003", "Nguyễn Thị Cúc", 1968, 'F');
-    Node* dung  = taoNode("G004", "Nguyễn Văn Dũng", 1972, 'M');
-    Node* cuong = taoNode("G005", "Nguyễn Văn Cường", 1990, 'M');
-    Node* dao   = taoNode("G006", "Nguyễn Thị Đào", 1993, 'F');
-    Node* duc   = taoNode("G007", "Trần Văn Đức", 1992, 'M');
-    Node* em    = taoNode("G008", "Trần Thị Em", 1995, 'F');
-    Node* khoa  = taoNode("G009", "Nguyễn Văn Khoa", 2015, 'M');
-    themConCuoi(root, binh);
-    themConCuoi(root, cuc);
-    themConCuoi(root, dung);
-    themConCuoi(binh, cuong);
-    themConCuoi(binh, dao);
-    themConCuoi(cuc, duc);
-    themConCuoi(cuc, em);
-    themConCuoi(cuong, khoa);
+    root = taoNode("G001", "Nguyen Van An", 1940, 'M');
+    Node* g002 = taoNode("G002", "Nguyen Van Binh", 1965, 'M');
+    Node* g003 = taoNode("G003", "Nguyen Thi Lan", 1968, 'F');
+    Node* g004 = taoNode("G004", "Nguyen Van Dung", 1972, 'M');
+    Node* g005 = taoNode("G005", "Nguyen Van Cuong", 1990, 'M');
+    Node* g006 = taoNode("G006", "Nguyen Thi Dao", 1993, 'F');
+    Node* g007 = taoNode("G007", "Tran Van Duc", 1992, 'M');
+    Node* g008 = taoNode("G008", "Tran Thi Em", 1995, 'F');
+    Node* g009 = taoNode("G009", "Nguyen Van Khoa", 2015, 'M');
+    Node* g010 = taoNode("G010", "Nguyen Thi Hoa", 2018, 'F');
+    themConCuoi(root, g002);
+    themConCuoi(root, g003);
+    themConCuoi(root, g004);
+    themConCuoi(g002, g005);
+    themConCuoi(g002, g006);
+    themConCuoi(g003, g007);
+    themConCuoi(g003, g008);
+    themConCuoi(g005, g009);
+    themConCuoi(g005, g010);
+}
+
+// Hướng dẫn nhập thành viên (hiện khi chọn tự nhập gia phả mới)
+void hienHuongDanNhap() {
+    cout << "\n========== HUONG DAN NHAP THANH VIEN ==========\n\n";
+    cout << "Moi thanh vien can co cac thong tin:\n";
+    cout << "1. Ma thanh vien: Ma rieng, khong duoc trung.\n";
+    cout << "2. Ho va ten: Nhap day du ho ten.\n";
+    cout << "3. Nam sinh: Nhap nam sinh hop le.\n";
+    cout << "4. Gioi tinh: Chon Nam hoac Nu theo quy uoc cua chuong trinh.\n";
+    cout << "5. Ma cha/me: Nhap ma cua thanh vien cha/me da ton tai.\n\n";
+    cout << "Luu y:\n";
+    cout << "- Thanh vien dau tien se la goc cua gia pha.\n";
+    cout << "- Thanh vien dau tien khong can nhap ma cha/me.\n";
+    cout << "- Tu thanh vien thu hai tro di, can nhap ma cha/me da ton tai.\n";
+    cout << "- Neu nhap sai, chuong trinh phai thong bao va cho nhap lai.\n";
+}
+
+// Menu chọn dữ liệu ban đầu khi khởi động chương trình
+//  1: gọi taoDuLieuMau() (đúng 1 lần) rồi hiển thị bảng thành viên
+//  2: root = NULL -> cây rỗng, hiện hướng dẫn nhập
+// Không đọc/ghi bất kỳ tệp nào.
+void menuKhoiTao() {
+    cout << "\n========== KHOI TAO GIA PHA ==========\n";
+    cout << "1. Su dung du lieu mau\n";
+    cout << "2. Tu nhap du lieu gia pha moi\n";
+    int chon = docSoNguyen("Lua chon cua ban: ", 1, 2);
+    if (chon == 1) {
+        taoDuLieuMau();
+        cout << "\n";
+        hienThiBangThanhVien();
+    } else {
+        xoaCay(root);          // lúc khởi động root đang là NULL nên không có gì để xóa
+        root = NULL;           // cây hoàn toàn rỗng
+        hienHuongDanNhap();
+    }
 }
 
 void hienMenu() {
@@ -341,8 +373,6 @@ void hienMenu() {
     cout << "12. Tính bậc thế hệ\n";
     cout << "13. Thống kê gia phả\n";
     cout << "14. Xuất gia phả dạng cây phân cấp\n";
-    cout << "15. Lưu dữ liệu\n";
-    cout << "16. Đọc dữ liệu\n";
     cout << " 0. Thoát chương trình\n";
     cout << "==============================================================\n";
 }
@@ -351,19 +381,13 @@ int main() {
 #ifdef _WIN32
     SetConsoleOutputCP(65001);   // console Windows hiển thị UTF-8
 #endif
-    // Khởi động: đọc tệp; nếu không được thì dùng dữ liệu mẫu
-    int kq = docDuLieu();
-    if (kq == 0) {
-        cout << "Đã nạp dữ liệu từ '" << TEN_FILE << "'.\n";
-    } else {
-        cout << "-> Dùng dữ liệu mẫu để chạy thử.\n";
-        taoDuLieuMau();
-    }
+    // Khởi động: cho người dùng chọn dữ liệu mẫu hoặc cây rỗng
+    menuKhoiTao();
 
     int chon = -1;
     while (chon != 0) {
         hienMenu();
-        chon = docSoNguyen("Chọn chức năng (0-16): ", 0, 16);
+        chon = docSoNguyen("Chọn chức năng (0-14): ", 0, 14);
         cout << "\n";
         switch (chon) {
             case 1:  themThanhVien();       break;
@@ -380,10 +404,8 @@ int main() {
             case 12: menuTheHe();           break;
             case 13: thongKe();             break;
             case 14: xuatGiaPha();          break;
-            case 15: luuDuLieu();           break;
-            case 16: menuDoc();             break;
             case 0:
-                if (!xacNhan("Thoát chương trình?")) chon = -1;   // không thoát
+                if (!xacNhan("Thoát chương trình? (dữ liệu chỉ nằm trong bộ nhớ nên sẽ mất)")) chon = -1;   // không thoát
                 break;
         }
     }
@@ -784,7 +806,7 @@ void traCuuQuanHe() {
 
 
 // ************************************************************
-// PHẦN 4 - NGƯỜI 4: THUẬT TOÁN TRÊN CÂY (DFS, BFS, LCA, thế hệ, LCRS)
+// PHẦN 4 - NGƯỜI 4: THUẬT TOÁN TRÊN CÂY (DFS, BFS, LCA, thế hệ)
 // ************************************************************
 
 // Bậc thế hệ của "dich" (gốc = 1).
@@ -923,38 +945,8 @@ void menuTheHe() {
     else cout << " (cách người gốc " << g - 1 << " đời).\n";
 }
 
-// Giải thích nguyên lý chuyển cây đa phân -> cây nhị phân LCRS
-void giaiThichLCRS() {
-    cout << "\n--- Nguyên lý chuyển cây đa phân sang cây nhị phân LCRS ---\n";
-    cout << " * Con TRÁI  (left)  của một nút = con ĐẦU TIÊN của nút đó trong cây đa phân.\n";
-    cout << " * Con PHẢI  (right) của một nút = ANH/EM KẾ TIẾP cùng cha/mẹ trong cây đa phân.\n";
-    cout << " => Mỗi nút chỉ cần đúng 2 con trỏ dù có bao nhiêu con.\n";
-    cout << " => Đi xuống (firstChild) thì thế hệ tăng 1; đi ngang (nextSibling) thì thế hệ KHÔNG đổi.\n\n";
-}
-
-// In bảng liên kết của từng nút
-void inBangLCRS(Node* n) {
-    if (n == NULL) return;
-    cout << "  " << n->id << "  | firstChild = ";
-    if (n->firstChild != NULL) cout << n->firstChild->id; else cout << "NULL";
-    cout << "  | nextSibling = ";
-    if (n->nextSibling != NULL) cout << n->nextSibling->id; else cout << "NULL";
-    cout << "\n";
-    inBangLCRS(n->firstChild);
-    inBangLCRS(n->nextSibling);
-}
-
-// In cây nhị phân LCRS: [L] = firstChild, [R] = nextSibling
-void inCayNhiPhan(Node* n, string tienTo, string nhan) {
-    if (n == NULL) return;
-    cout << tienTo << nhan << n->name << " [" << n->id << "]\n";
-    inCayNhiPhan(n->firstChild, tienTo + "    ", "[L] ");
-    inCayNhiPhan(n->nextSibling, tienTo + "    ", "[R] ");
-}
-
-
 // ************************************************************
-// PHẦN 5 - NGƯỜI 5: THỐNG KÊ, HIỂN THỊ, LƯU VÀ ĐỌC TỆP
+// PHẦN 5 - NGƯỜI 5: THỐNG KÊ, HIỂN THỊ (bảng, cây phân cấp)
 // ************************************************************
 
 // Số thế hệ = chiều cao của cây
@@ -1040,153 +1032,119 @@ void inCayPhanCap(Node* n, string tienTo, bool laCuoi, bool laGoc) {
     }
 }
 
+// Số cột hiển thị của chuỗi UTF-8: mỗi ký tự = 1 cột (bỏ qua byte nối 10xxxxxx)
+// => bảng vẫn thẳng hàng khi tên có dấu tiếng Việt.
+int doRongHienThi(string s) {
+    int dem = 0;
+    for (int i = 0; i < (int)s.length(); i++) {
+        if (((unsigned char)s[i] & 0xC0) != 0x80) dem++;
+    }
+    return dem;
+}
+
+string soSangChuoi(int v) {
+    if (v == 0) return "0";
+    string kq = "";
+    while (v > 0) {
+        kq = string(1, (char)('0' + v % 10)) + kq;
+        v = v / 10;
+    }
+    return kq;
+}
+
+// In một ô: "| " + nội dung + khoảng trắng bù cho đủ độ rộng cột + " "
+void inO(string noiDung, int doRong) {
+    cout << "| " << noiDung << string(doRong - doRongHienThi(noiDung), ' ') << " ";
+}
+
+void inDuongKe(int w1, int w2, int w3, int w4, int w5, int w6) {
+    cout << "+" << string(w1 + 2, '-') << "+" << string(w2 + 2, '-')
+         << "+" << string(w3 + 2, '-') << "+" << string(w4 + 2, '-')
+         << "+" << string(w5 + 2, '-') << "+" << string(w6 + 2, '-') << "+\n";
+}
+
+// Hiển thị toàn bộ thành viên dưới dạng bảng ASCII (lấy trực tiếp từ cây,
+// duyệt theo thế hệ bằng hàng đợi mảng nên cha luôn đứng trước con).
+void hienThiBangThanhVien() {
+    if (root == NULL) {
+        cout << "Gia pha chua co du lieu.\n";
+        cout << "Hay chon chuc nang 1 de them thanh vien dau tien (nguoi goc),\n";
+        cout << "sau do them cac thanh vien khac bang cach nhap ma cha/me.\n";
+        return;
+    }
+    // Bước 1: BFS để lấy danh sách nút và cha/mẹ của từng nút
+    Node* hang[MAX_NODE];
+    Node* chaNut[MAX_NODE];
+    int dau = 0, cuoi = 0;
+    hang[cuoi] = root;
+    chaNut[cuoi] = NULL;
+    cuoi++;
+    while (dau < cuoi) {
+        Node* n = hang[dau];
+        dau++;
+        for (Node* c = n->firstChild; c != NULL; c = c->nextSibling) {
+            hang[cuoi] = c;
+            chaNut[cuoi] = n;
+            cuoi++;
+        }
+    }
+    int tong = cuoi;
+
+    // Bước 2: tính độ rộng từng cột theo dữ liệu thật (không thấp hơn tiêu đề)
+    int wStt = (int)soSangChuoi(tong).length();
+    if (wStt < 3) wStt = 3;                       // "STT"
+    int wMa = 13;                                  // "Ma thanh vien"
+    int wTen = 9;                                  // "Ho va ten"
+    int wNam = 8;                                  // "Nam sinh"
+    int wGt = 9;                                   // "Gioi tinh"
+    int wCha = 9;                                  // "Ma cha/me"
+    for (int i = 0; i < tong; i++) {
+        int d = doRongHienThi(hang[i]->id);
+        if (d > wMa) wMa = d;
+        if (d > wCha) wCha = d;
+        d = doRongHienThi(hang[i]->name);
+        if (d > wTen) wTen = d;
+    }
+    if (wCha < 8) wCha = 8;                        // "Khong co"
+
+    // Bước 3: in bảng
+    cout << "======================= DANH SACH THANH VIEN GIA PHA =======================\n\n";
+    inDuongKe(wStt, wMa, wTen, wNam, wGt, wCha);
+    inO("STT", wStt);  inO("Ma thanh vien", wMa);  inO("Ho va ten", wTen);
+    inO("Nam sinh", wNam);  inO("Gioi tinh", wGt);  inO("Ma cha/me", wCha);
+    cout << "|\n";
+    inDuongKe(wStt, wMa, wTen, wNam, wGt, wCha);
+    for (int i = 0; i < tong; i++) {
+        Node* n = hang[i];
+        string gt = "Nu";
+        if (n->gender == 'M') gt = "Nam";
+        string maCha = "Khong co";
+        if (chaNut[i] != NULL) maCha = chaNut[i]->id;
+        inO(soSangChuoi(i + 1), wStt);
+        inO(n->id, wMa);
+        inO(n->name, wTen);
+        inO(soSangChuoi(n->birthYear), wNam);
+        inO(gt, wGt);
+        inO(maCha, wCha);
+        cout << "|\n";
+    }
+    inDuongKe(wStt, wMa, wTen, wNam, wGt, wCha);
+    cout << "\nTong so thanh vien: " << tong << "\n";
+}
+
 // Chức năng 14
 void xuatGiaPha() {
     if (root == NULL) {
-        cout << "  ! Gia phả đang rỗng.\n";
+        hienThiBangThanhVien();      // cây rỗng: thông báo và hướng dẫn thêm thành viên
         return;
     }
-    int chon = docSoNguyen("1 = Cây phân cấp, 2 = Dạng nhị phân LCRS (có giải thích): ", 1, 2);
+    cout << "  1 = Cây phân cấp\n";
+    cout << "  2 = Bảng danh sách thành viên\n";
+    int chon = docSoNguyen("Chọn: ", 1, 2);
     if (chon == 1) {
         cout << "--- GIA PHẢ ---\n";
         inCayPhanCap(root, "", true, true);
     } else {
-        giaiThichLCRS();
-        cout << "Bảng liên kết:\n";
-        inBangLCRS(root);
-        cout << "\nCây nhị phân tương ứng ([L] = firstChild, [R] = nextSibling):\n";
-        inCayNhiPhan(root, "", "");
-    }
-}
-
-// Ghi tệp: mỗi dòng  id|tên|năm sinh|giới tính|mã cha   (gốc có mã cha là "-")
-void ghiDeQuy(ofstream& f, Node* n, string maCha) {
-    if (n == NULL) return;
-    f << n->id << "|" << n->name << "|" << n->birthYear << "|"
-      << n->gender << "|" << maCha << "\n";
-    ghiDeQuy(f, n->firstChild, n->id);        // con của n: cha là n
-    ghiDeQuy(f, n->nextSibling, maCha);       // em của n: cùng cha với n
-}
-
-// Chức năng 15
-void luuDuLieu() {
-    if (root == NULL) {
-        cout << "  ! Gia phả đang rỗng, không có gì để lưu.\n";
-        return;
-    }
-    ofstream f(TEN_FILE.c_str());
-    if (!f) {
-        cout << "  ! Không thể ghi tệp '" << TEN_FILE << "'.\n";
-        return;
-    }
-    f << TIEU_DE_FILE << "\n";
-    ghiDeQuy(f, root, "-");
-    f.close();
-    cout << "  => Đã lưu " << demThanhVien(root) << " thành viên vào '" << TEN_FILE << "'.\n";
-}
-
-// Tách một dòng theo dấu '|' vào mảng truong; trả về số trường tìm được
-int tachTruong(string dong, string truong[], int toiDa) {
-    int soTruong = 0;
-    string hienTai = "";
-    for (int i = 0; i < (int)dong.length(); i++) {
-        if (dong[i] == '|') {
-            if (soTruong < toiDa) truong[soTruong] = hienTai;
-            soTruong++;
-            hienTai = "";
-        } else {
-            hienTai += dong[i];
-        }
-    }
-    if (soTruong < toiDa) truong[soTruong] = hienTai;
-    soTruong++;
-    return soTruong;
-}
-
-// Đọc tệp vào một cây mới; chỉ thay cây hiện tại khi cả tệp hợp lệ.
-// Trả về: 0 = thành công, 1 = tệp không tồn tại, 2 = dữ liệu không hợp lệ
-int docDuLieu() {
-    ifstream f(TEN_FILE.c_str());
-    if (!f) {
-        cout << "  ! Không tìm thấy tệp '" << TEN_FILE << "'.\n";
-        return 1;
-    }
-    string dong;
-    if (!getline(f, dong) || catKhoangTrang(dong) != TIEU_DE_FILE) {
-        cout << "  ! Sai định dạng tệp (thiếu dòng tiêu đề " << TIEU_DE_FILE << ").\n";
-        return 2;
-    }
-    Node* goc = NULL;
-    int soDong = 1;
-    while (getline(f, dong)) {
-        soDong++;
-        dong = catKhoangTrang(dong);
-        if (dong == "") continue;
-
-        string tr[10];
-        int soTruong = tachTruong(dong, tr, 10);
-        string loi = "";
-        int nam = 0;
-        if (soTruong != 5) {
-            loi = "cần đủ 5 trường";
-        } else if (!maHopLe(tr[0])) {
-            loi = "mã không hợp lệ";
-        } else if (!tenHopLe(tr[1])) {
-            loi = "tên không hợp lệ";
-        } else if (!laSoNguyen(tr[2]) || tr[2].length() > 4) {
-            loi = "năm sinh không hợp lệ";
-        } else if (tr[3] != "M" && tr[3] != "F") {
-            loi = "giới tính phải là M hoặc F";
-        } else if (timTheoMa(goc, tr[0]) != NULL) {
-            loi = "trùng mã " + tr[0];
-        } else {
-            nam = atoi(tr[2].c_str());
-            if (nam < NAM_NHO_NHAT || nam > NAM_LON_NHAT) loi = "năm sinh ngoài khoảng cho phép";
-        }
-
-        if (loi == "") {
-            Node* n = taoNode(tr[0], tr[1], nam, tr[3][0]);
-            if (tr[4] == "-") {                         // người gốc
-                if (goc != NULL) {
-                    loi = "có hơn một người gốc";
-                    delete n;
-                } else {
-                    goc = n;
-                }
-            } else {                                     // có cha/mẹ: cha/mẹ phải đã có trong cây
-                Node* cha = timTheoMa(goc, tr[4]);
-                if (cha == NULL) {
-                    loi = "không tìm thấy cha/mẹ có mã " + tr[4];
-                    delete n;
-                } else {
-                    themConCuoi(cha, n);
-                }
-            }
-        }
-
-        if (loi != "") {
-            cout << "  ! Dữ liệu không hợp lệ - dòng " << soDong << ": " << loi << "\n";
-            xoaCay(goc);                                 // bỏ cây đọc dở
-            return 2;
-        }
-    }
-    xoaCay(root);
-    root = goc;
-    return 0;
-}
-
-// Chức năng 16
-void menuDoc() {
-    if (root != NULL) {
-        if (!xacNhan("Dữ liệu hiện tại sẽ bị thay bằng dữ liệu trong tệp. Tiếp tục?")) {
-            cout << "  Đã hủy.\n";
-            return;
-        }
-    }
-    int kq = docDuLieu();
-    if (kq == 0) {
-        cout << "  => Đã đọc " << demThanhVien(root) << " thành viên từ '" << TEN_FILE << "'.\n";
-    } else if (root != NULL) {
-        cout << "  (Giữ nguyên dữ liệu hiện tại)\n";
+        hienThiBangThanhVien();
     }
 }

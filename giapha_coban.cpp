@@ -8,8 +8,6 @@
 //  mảng, struct, con trỏ, đệ quy, string.
 //  (không dùng vector, auto, nullptr, lambda, STL queue...)
 //  "dữ liệu mẫu" hoặc "tự nhập gia phả mới".
-//  File chia thành 5 PHẦN cho 5 người (xem các dòng "PHẦN n").
-// ============================================================
 #include <iostream>
 #include <string>
 #include <cstdlib>    // atoi, exit
@@ -101,10 +99,6 @@ string soSangChuoi(int v);
 void hienThiBangThanhVien();
 void xuatGiaPha();
 
-
-// ************************************************************
-// PHẦN 1 - NGƯỜI 1: NỀN TẢNG, HÀM NHẬP, THAO TÁC CƠ BẢN, MENU
-// ************************************************************
 
 // Cắt khoảng trắng ở đầu và cuối chuỗi
 string catKhoangTrang(string s) {
@@ -415,10 +409,6 @@ int main() {
 }
 
 
-// ************************************************************
-// PHẦN 2 - NGƯỜI 2: QUẢN LÝ THÀNH VIÊN (thêm, tìm, sửa, xóa)
-// ************************************************************
-
 // Nhập thông tin một thành viên mới; "cha" = NULL nếu là người gốc.
 // Trả về NULL nếu người dùng hủy (để trống mã).
 Node* nhapThanhVienMoi(Node* cha) {
@@ -640,10 +630,7 @@ void xoaThanhVien() {
 }
 
 
-// ************************************************************
-// PHẦN 3 - NGƯỜI 3: QUẢN LÝ QUAN HỆ GIA ĐÌNH
-// (cần hàm timLCA, timDuongDi, tinhTheHe của người 4)
-// ************************************************************
+
 
 // Chuyển một thành viên (cùng hậu duệ) sang làm con của người khác
 void chuyenNhanh() {
@@ -805,9 +792,7 @@ void traCuuQuanHe() {
 }
 
 
-// ************************************************************
-// PHẦN 4 - NGƯỜI 4: THUẬT TOÁN TRÊN CÂY (DFS, BFS, LCA, thế hệ)
-// ************************************************************
+
 
 // Bậc thế hệ của "dich" (gốc = 1).
 //  - đi xuống con đầu (firstChild): thế hệ + 1

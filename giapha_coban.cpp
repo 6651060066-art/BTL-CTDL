@@ -2,8 +2,8 @@
 //  QUẢN LÝ GIA PHẢ GIA TỘC MINI 
 //  Cây đa phân biểu diễn bằng cây nhị phân LCRS
 //     firstChild  = con đầu tiên
-//     nextSibling = anh/chị/em kế tiếp
-//
+//     nextSibling = anh/chị/em kế tiếp.
+// 
 //  Chỉ dùng kiến thức C++ phổ thông: biến, if/for/while, hàm,
 //  mảng, struct, con trỏ, đệ quy, string.
 //  (không dùng vector, auto, nullptr, lambda, STL queue...)

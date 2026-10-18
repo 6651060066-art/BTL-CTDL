@@ -930,9 +930,6 @@ void menuTheHe() {
     else cout << " (cách người gốc " << g - 1 << " đời).\n";
 }
 
-// ************************************************************
-// PHẦN 5 - NGƯỜI 5: THỐNG KÊ, HIỂN THỊ (bảng, cây phân cấp)
-// ************************************************************
 
 // Số thế hệ = chiều cao của cây
 int chieuCao(Node* n) {
